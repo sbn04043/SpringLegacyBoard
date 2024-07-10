@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+    <context:property-placeholder location="classpath:mybatis/config/database.properties"/>
+    <!-- Database 연결 -->
+    <bean class="org.springframework.jdbc.datasource.DriverManagerDataSource" id="dataSource">
+        <!-- database.properties 에서 갖고옴
+            git 올릴 때 database.properties 빼고 올리면 보안에 도움이 된다. -->
+        <property name="driverClassName" value="${datasource.driver}"/>
+        <property name="url" value="${datasource.url}"/>
+        <property name="username" value="${datasource.username}"/>
+        <property name="password" value="${datasource.password}"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <!-- 다른 bean을 참조할 때는 ref 사용해 id를 가져온다. -->
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:mybatis/config/mybatis-config.xml"/>
+        <property name="mapperLocations" value="classpath:mybatis/mappers/*Mapper.xml"/>
+    </bean>
+
+    <bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSession">
+        <!-- 생성자의 sql session factory가 있어야 함 -->
+        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactoryBean"/>
+
+    </bean>
+
+</beans>

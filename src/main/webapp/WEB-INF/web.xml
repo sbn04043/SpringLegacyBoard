@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0" metadata-complete="true">
+    <!--  스프링에서 따로 관리해야하는 객체(aka 빈)를 등록해야 할 때
+        application-context.xml에 등록한다. -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <!-- 내가 만든 스프링 레거시 프로젝트의 설정에 대한 파일의 위치 -->
+        <param-value>
+            /WEB-INF/spring/application-context.xml
+            /WEB-INF/spring/security-context.xml
+        </param-value>
+    </context-param>
+
+    <!-- 위에서 지정한 설정 xml 파일을 객체화 시킬 때 사용할 클래스 -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- 뷰, 컨트롤러, 서비스 등의 패키지에 대한 설정을 담은 디스패쳐 설정 -->
+    <!-- servlet: 자바에서 제공하는 인터페이스
+        특정한 URL에 대해 어떤 행동을 한 것인지 매핑
+        클래스 하나당 URL 하나만 가능(showOne, showAll 하나씩만 가능)
+        jsp 파일 리턴이 불가능
+            return "<html><head></head></html>"; 식으로 리턴해야 함
+        이러한 이유로 컨트롤러를 따로 쓴다. -->
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>WEB-INF/spring/dispatcher-servlet.xml</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- welcom-file-list: 시작 페이지 설정 -->
+    <!-- session-config 세션 설정(session-timeout 등) -->
+</web-app>
